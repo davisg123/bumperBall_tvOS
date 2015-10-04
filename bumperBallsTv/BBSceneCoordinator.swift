@@ -18,7 +18,7 @@ class BBSceneCoordinator: NSObject {
     private let playerCoordinator = BBPlayerCoordinator()
     
     /// The mapping of controllers to players
-    private var controllerMap = []
+    private var controllerMap : [GCController:BBPlayer] = [:]
     
     override init() {
         super.init()
@@ -32,7 +32,16 @@ class BBSceneCoordinator: NSObject {
         return controllerCoordinator.pairedControllers
     }
     
-    func controllerDelegate() -> BBControllerDelegate {
-        return controllerCoordinator.delegate!
+    func setControllerDelegate(delegateTarget : BBControllerDelegate) {
+        controllerCoordinator.delegate = delegateTarget
+    }
+    
+    func beginGame() {
+        let players = playerCoordinator.createPlayers(controllerCoordinator.pairedControllers.count)
+        for i in 0 ..< players.count{
+            scene.rootNode.addChildNode(players[i])
+            let controller = controllerCoordinator.pairedControllers[i]
+            controllerMap[controller] = players[i]
+        }
     }
 }

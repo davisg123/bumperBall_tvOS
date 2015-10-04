@@ -18,7 +18,7 @@ class BBPlayerCoordinator: NSObject, SCNSceneRendererDelegate {
     
     func createPlayers(numPlayers : Int) -> [BBPlayer]{
         players.removeAll()
-        for pos in playerPositions(4){
+        for pos in playerPositions(numPlayers){
             players.append(BBPlayer(position: pos))
         }
         return players;

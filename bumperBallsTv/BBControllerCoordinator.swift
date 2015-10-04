@@ -23,11 +23,8 @@ class BBControllerCoordinator: NSObject {
     override init() {
         super.init()
         
-        /// Register for `GCGameController` pairing notifications.
-        func registerForGameControllerNotifications() {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleControllerDidConnectNotification:", name: GCControllerDidConnectNotification, object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleControllerDidDisconnectNotification:", name: GCControllerDidDisconnectNotification, object: nil)
-        }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleControllerDidConnectNotification:", name: GCControllerDidConnectNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleControllerDidDisconnectNotification:", name: GCControllerDidDisconnectNotification, object: nil)
     }
     
     @objc func handleControllerDidConnectNotification(notification: NSNotification) {
