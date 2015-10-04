@@ -1,0 +1,48 @@
+//
+//  BBPlayerCoordinator.swift
+//  bumperBallsTv
+//
+//  Created by Davis Gossage on 10/5/15.
+//  Copyright © 2015 Davis Gossage. All rights reserved.
+//
+
+import UIKit
+import SceneKit
+
+class BBPlayerCoordinator: NSObject, SCNSceneRendererDelegate {
+    let FORCE_SCALE_FACTOR : Float = 8.0
+    
+    private var players : [BBPlayer] = []
+    
+    var count = 0
+    
+    func createPlayers(numPlayers : Int) -> [BBPlayer]{
+        players.removeAll()
+        for pos in playerPositions(4){
+            players.append(BBPlayer(position: pos))
+        }
+        return players;
+    }
+    
+    private func playerPositions(numPlayers : Int) -> [SCNVector3]{
+        switch numPlayers{
+        case 1:
+            return [SCNVector3Make(0, 20, 0)]
+        case 2:
+            return [SCNVector3Make(2.5, 20, 0), SCNVector3Make(-2.5, 20, 0)]
+        case 3:
+            return [SCNVector3Make(2.5, 20, 0), SCNVector3Make(0, 20, 0), SCNVector3Make(-2.5, 20, 0)]
+        case 4:
+            return [SCNVector3Make(2.5, 20, 0), SCNVector3Make(-2.5, 20, 0), SCNVector3Make(0, 20, 2.5), SCNVector3Make(0, 20, -2.5)]
+        default:
+            return [SCNVector3Make(0, 20, 0)]
+        }
+    }
+    
+    func renderer(renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: NSTimeInterval) {
+        count++
+        for player : BBPlayer in players{
+            player.physicsBody!.applyForce(SCNVector3Make(player.xForceApplied*FORCE_SCALE_FACTOR, 0, -player.yForceApplied*FORCE_SCALE_FACTOR), impulse: false)
+        }
+    }
+}
