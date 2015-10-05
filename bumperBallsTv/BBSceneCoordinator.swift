@@ -10,8 +10,11 @@ import UIKit
 import GameController
 import SceneKit
 
-class BBSceneCoordinator: NSObject {
+class BBSceneCoordinator: NSObject, BBControllerInputDelegate {
     static let sharedInstance = BBSceneCoordinator()
+    
+    ///game active?
+    private var gameActive = false
     
     //BBSceneCoordinator is the parent, handles all other coordinators
     private let controllerCoordinator = BBControllerCoordinator()
@@ -22,6 +25,7 @@ class BBSceneCoordinator: NSObject {
     
     override init() {
         super.init()
+        controllerCoordinator.inputDelegate = self
     }
     
     func attachScene(sceneView : SCNView!){
@@ -37,11 +41,23 @@ class BBSceneCoordinator: NSObject {
     }
     
     func beginGame() {
+        gameActive = true
         let players = playerCoordinator.createPlayers(controllerCoordinator.pairedControllers.count)
         for i in 0 ..< players.count{
             scene.rootNode.addChildNode(players[i])
             let controller = controllerCoordinator.pairedControllers[i]
             controllerMap[controller] = players[i]
+        }
+    }
+    
+    
+    // MARK: BBControllerInputDelegate
+    
+    func inputReceivedFromController(controller: GCController, xValue: Float, yValue: Float) {
+        if (gameActive){
+            let player = controllerMap[controller]
+            player?.xForceApplied = xValue
+            player?.yForceApplied = yValue
         }
     }
 }

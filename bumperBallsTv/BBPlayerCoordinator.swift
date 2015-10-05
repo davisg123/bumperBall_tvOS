@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 
 class BBPlayerCoordinator: NSObject, SCNSceneRendererDelegate {
-    let FORCE_SCALE_FACTOR : Float = 8.0
+    let FORCE_SCALE_FACTOR : Float = 10.0
     
     private var players : [BBPlayer] = []
     
@@ -42,7 +42,14 @@ class BBPlayerCoordinator: NSObject, SCNSceneRendererDelegate {
     func renderer(renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: NSTimeInterval) {
         count++
         for player : BBPlayer in players{
-            player.physicsBody!.applyForce(SCNVector3Make(player.xForceApplied*FORCE_SCALE_FACTOR, 0, -player.yForceApplied*FORCE_SCALE_FACTOR), impulse: false)
+            //we want reversing out of motion to be easier
+            let sameSignX = (player.physicsBody!.velocity.x * player.xForceApplied) > 0
+            let sameSignY = (player.physicsBody!.velocity.y * player.yForceApplied) > 0
+            
+            let reverseSpeedXFactor : Float = !sameSignX ? 2.0 : 1.0;
+            let reverseSpeedYFactor : Float = !sameSignY ? 2.0 : 1.0;
+            
+            player.physicsBody!.applyForce(SCNVector3Make(player.xForceApplied*FORCE_SCALE_FACTOR*reverseSpeedXFactor, 0, -player.yForceApplied*FORCE_SCALE_FACTOR*reverseSpeedYFactor), impulse: false)
         }
     }
 }
